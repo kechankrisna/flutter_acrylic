@@ -5,6 +5,7 @@
 - Documented an Impeller crash that can occur when the full-size content view is toggled at runtime, and how to opt out of Impeller on macOS.
 - Updated the README's macOS setup notes for current Flutter (deployment target 12.0).
 - Example: disabled Impeller on macOS.
+- Example: keep the blur active on macOS even when the window is not focused, and add a semi-transparent tint behind the main content so maximized and fullscreen windows no longer take on the desktop wallpaper's color.
 
 ## 1.2.1
 

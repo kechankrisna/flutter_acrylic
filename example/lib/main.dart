@@ -48,6 +48,20 @@ extension InterfaceBrightnessExtension on InterfaceBrightness {
   Color getForegroundColor(BuildContext? context) {
     return getIsDark(context) ? Colors.white : Colors.black;
   }
+
+  /// A semi-transparent tint drawn over the window effect on macOS.
+  ///
+  /// macOS blur materials take their color from whatever is behind the window,
+  /// so a maximized or fullscreen window (with only the desktop wallpaper
+  /// behind it) would otherwise take on the wallpaper's color. The tint keeps
+  /// the look consistent while still letting the blur show through.
+  Color getMacOSTintColor(BuildContext? context) {
+    if (!Platform.isMacOS) return Colors.transparent;
+
+    return getIsDark(context)
+        ? Colors.black.withValues(alpha: 0.6)
+        : Colors.white.withValues(alpha: 0.7);
+  }
 }
 
 class MyAppBody extends StatefulWidget {
@@ -63,13 +77,18 @@ class MyAppBodyState extends State<MyAppBody> {
   InterfaceBrightness brightness = Platform.isMacOS
       ? InterfaceBrightness.auto
       : InterfaceBrightness.dark;
-  MacOSBlurViewState macOSBlurViewState =
-      MacOSBlurViewState.followsWindowActiveState;
+  // Keep the blur on even when the window is not focused (e.g. after zooming
+  // or entering/exiting fullscreen), instead of macOS's default of showing an
+  // opaque inactive backdrop.
+  MacOSBlurViewState macOSBlurViewState = MacOSBlurViewState.active;
 
   @override
   void initState() {
     super.initState();
     setWindowEffect(effect);
+    if (Platform.isMacOS) {
+      Window.setBlurViewState(macOSBlurViewState);
+    }
   }
 
   void setWindowEffect(WindowEffect? value) {
@@ -240,7 +259,7 @@ class MyAppBodyState extends State<MyAppBody> {
         child: Stack(
           children: [
             Scaffold(
-              backgroundColor: Colors.transparent,
+              backgroundColor: brightness.getMacOSTintColor(context),
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
