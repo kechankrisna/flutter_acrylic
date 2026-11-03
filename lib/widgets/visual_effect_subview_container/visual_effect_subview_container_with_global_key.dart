@@ -149,9 +149,16 @@ class _VisualEffectSubviewContainerWithGlobalKeyState
   /// Determines the position and size of this widget relative to the
   /// application window and modifies the visual effect subview accordingly.
   void _updateVisualEffectSubview() {
-    final renderObject =
-        (widget.key as GlobalKey).currentContext!.findRenderObject()
-            as RenderBox;
+    // This is called from a timer, so the widget may have been unmounted or
+    // its render object detached (e.g. replaced by an error widget) by now.
+    if (!mounted) return;
+    final renderObject = (widget.key as GlobalKey).currentContext
+        ?.findRenderObject();
+    if (renderObject is! RenderBox ||
+        !renderObject.attached ||
+        !renderObject.hasSize) {
+      return;
+    }
     final position = renderObject.localToGlobal(Offset.zero);
 
     final windowHeight = MediaQuery.of(context).size.height;

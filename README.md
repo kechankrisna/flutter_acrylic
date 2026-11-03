@@ -371,14 +371,14 @@ You can see the [example](https://github.com/alexmercerind/flutter_acrylic/blob/
 
 **Additional setup for macOS:**
 
-flutter_acrylic depends on the [macos_window_utils](https://pub.dev/packages/macos_window_utils) plugin, which requires macOS 10.14.6 or above. Please update your macOS deployment target as follows:
+flutter_acrylic depends on the [macos_window_utils](https://pub.dev/packages/macos_window_utils) plugin. Recent Flutter versions require a macOS deployment target of `12.0` or above, which `flutter run`/`flutter build macos` will usually set for you. To set it manually:
 
-Open the `macos/Runner.xcworkspace` folder of your project using Xcode, press ⇧ + ⌘ + O and search for `Runner.xcodeproj`. Go to `Info` > `Deployment Target` and set the `macOS Deployment Target` to `10.14.6` or above.
+Open the `macos/Runner.xcworkspace` folder of your project using Xcode, press ⇧ + ⌘ + O and search for `Runner.xcodeproj`. Go to `Info` > `Deployment Target` and set the `macOS Deployment Target` to `12.0` or above.
 
-Additionally, you may need to open the `Podfile` in your Xcode project and make sure the deployment target in the first line is set to `10.14.6` or above as well:
+If your project still uses CocoaPods, make sure the deployment target in the first line of `macos/Podfile` is set to `12.0` or above as well:
 
 ```podspec
-platform :osx, '10.14.6'
+platform :osx, '12.0'
 ```
 
 Depending on your use case, you may want to extend the area of the window that Flutter can draw to to the entire window, such that you are able to draw onto the window's title bar as well (for example when you're only trying to make the sidebar transparent while the rest of the window is meant to stay opaque).
@@ -399,6 +399,15 @@ TitlebarSafeArea(
 ```
 
 This ensures that your app is not covered by the window's title bar.
+
+**Note:** On recent Flutter versions, the Impeller renderer may crash (`The texture and its descriptor disagree about its size`) when the full-size content view is enabled or disabled *while the app is running* and a `TitlebarSafeArea` is present. If your app toggles the full-size content view at runtime, you can opt out of Impeller on macOS by adding the following to `macos/Runner/Info.plist`:
+
+```xml
+<key>FLTEnableImpeller</key>
+<false/>
+```
+
+The example app does this.
 
 Additionally, it may be worth considering to split your sidebar and your main view into multiple `NSVisualEffectView`'s inside your
 app. This is because macOS has a feature called “wallpaper tinting,” which is enabled by default. This feature allows windows to
