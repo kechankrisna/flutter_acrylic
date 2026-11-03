@@ -12,11 +12,11 @@ class SidebarFrame extends StatefulWidget {
   final MacOSBlurViewState macOSBlurViewState;
 
   const SidebarFrame({
-    Key? key,
+    super.key,
     required this.sidebar,
     required this.child,
     required this.macOSBlurViewState,
-  }) : super(key: key);
+  });
 
   @override
   State<SidebarFrame> createState() => _SidebarFrameState();
@@ -69,10 +69,7 @@ class _SidebarFrameState extends State<SidebarFrame> {
               },
               child: widget.sidebar,
             ),
-            Container(
-              width: 1.0,
-              color: Colors.black.withOpacity(0.2),
-            ),
+            Container(width: 1.0, color: Colors.black.withValues(alpha: 0.2)),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 32.0),

@@ -66,7 +66,7 @@ class VisualEffectSubviewProperties {
       state == null;
 
   macos_window_utils.VisualEffectSubviewProperties
-      toMacOSWindowUtilsVisualEffectSubviewProperties() {
+  toMacOSWindowUtilsVisualEffectSubviewProperties() {
     final material = effect == null
         ? null
         : WindowEffectToMaterialConverter.convertWindowEffectToMaterial(
@@ -74,8 +74,9 @@ class VisualEffectSubviewProperties {
           );
     final visualEffectViewState = state == null
         ? null
-        : BlurViewStateToVisualEffectViewStateConverter
-            .convertBlurViewStateToVisualEffectViewState(state!);
+        : BlurViewStateToVisualEffectViewStateConverter.convertBlurViewStateToVisualEffectViewState(
+            state!,
+          );
 
     return macos_window_utils.VisualEffectSubviewProperties(
       frameWidth: frameWidth,

@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 /// An item to be displayed in the action list.
 class ActionListItem extends StatefulWidget {
   const ActionListItem({
-    Key? key,
+    super.key,
     required this.name,
     required this.function,
     required this.isSelected,
     required this.select,
     required this.perform,
-  }) : super(key: key);
+  });
 
   final String name;
   final void Function() function;
@@ -73,10 +73,9 @@ class _ActionListItemState extends State<ActionListItem> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 50),
           decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .background
-                .withOpacity(_getBackgroundOpacity()),
+            color: Theme.of(
+              context,
+            ).colorScheme.surface.withValues(alpha: _getBackgroundOpacity()),
           ),
           child: SizedBox(
             width: double.infinity,
@@ -91,8 +90,9 @@ class _ActionListItemState extends State<ActionListItem> {
                 child: Text(
                   widget.name,
                   style: TextStyle(
-                    fontWeight:
-                        widget.isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: widget.isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ),

@@ -10,7 +10,7 @@ import 'action_list/action_list.dart';
 class MacOSActionMenu extends StatefulWidget {
   final List<MacOSActionMenuItem> items;
 
-  const MacOSActionMenu({Key? key, required this.items}) : super(key: key);
+  const MacOSActionMenu({super.key, required this.items});
 
   @override
   State<MacOSActionMenu> createState() => _MacOSActionMenuState();
@@ -86,10 +86,10 @@ class _MacOSActionMenuState extends State<MacOSActionMenu> {
                         labelText: 'Search for a macOS action to perform:',
                       ),
                       onChanged: ((value) => setState(() {
-                            _searchString = value;
-                            _updateFilteredItems();
-                            _selectedIndex = 0;
-                          })),
+                        _searchString = value;
+                        _updateFilteredItems();
+                        _selectedIndex = 0;
+                      })),
                     ),
                   ),
                   Expanded(

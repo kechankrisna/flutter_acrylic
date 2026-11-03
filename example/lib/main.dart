@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/widgets/visual_effect_subview_container/visual_effect_subview_container.dart';
@@ -12,31 +11,17 @@ import 'package:flutter_acrylic_example/widgets/sidebar_frame/sidebar_frame.dart
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Window.initialize();
-  if (Platform.isWindows) {
-    await Window.hideWindowControls();
-  }
   runApp(MyApp());
-  if (Platform.isWindows) {
-    doWhenWindowReady(() {
-      appWindow
-        ..minSize = Size(640, 360)
-        ..size = Size(720, 540)
-        ..alignment = Alignment.center
-        ..show();
-    });
-  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        splashFactory: InkRipple.splashFactory,
-      ),
+      theme: ThemeData(splashFactory: InkRipple.splashFactory),
       darkTheme: ThemeData.dark().copyWith(
         splashFactory: InkRipple.splashFactory,
       ),
@@ -46,11 +31,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-enum InterfaceBrightness {
-  light,
-  dark,
-  auto,
-}
+enum InterfaceBrightness { light, dark, auto }
 
 extension InterfaceBrightnessExtension on InterfaceBrightness {
   bool getIsDark(BuildContext? context) {
@@ -70,7 +51,7 @@ extension InterfaceBrightnessExtension on InterfaceBrightness {
 }
 
 class MyAppBody extends StatefulWidget {
-  MyAppBody({Key? key}) : super(key: key);
+  const MyAppBody({super.key});
 
   @override
   MyAppBodyState createState() => MyAppBodyState();
@@ -79,21 +60,22 @@ class MyAppBody extends StatefulWidget {
 class MyAppBodyState extends State<MyAppBody> {
   WindowEffect effect = WindowEffect.transparent;
   Color color = Platform.isWindows ? Color(0xCC222222) : Colors.transparent;
-  InterfaceBrightness brightness =
-      Platform.isMacOS ? InterfaceBrightness.auto : InterfaceBrightness.dark;
+  InterfaceBrightness brightness = Platform.isMacOS
+      ? InterfaceBrightness.auto
+      : InterfaceBrightness.dark;
   MacOSBlurViewState macOSBlurViewState =
       MacOSBlurViewState.followsWindowActiveState;
 
   @override
   void initState() {
     super.initState();
-    this.setWindowEffect(this.effect);
+    setWindowEffect(effect);
   }
 
   void setWindowEffect(WindowEffect? value) {
     Window.setEffect(
       effect: value!,
-      color: this.color,
+      color: color,
       dark: brightness == InterfaceBrightness.dark,
     );
     if (Platform.isMacOS) {
@@ -103,7 +85,7 @@ class MyAppBodyState extends State<MyAppBody> {
         );
       }
     }
-    this.setState(() => this.effect = value);
+    setState(() => effect = value);
   }
 
   void setBrightness(InterfaceBrightness brightness) {
@@ -113,7 +95,7 @@ class MyAppBodyState extends State<MyAppBody> {
     } else {
       color = Platform.isWindows ? Color(0x22DDDDDD) : Colors.transparent;
     }
-    this.setWindowEffect(this.effect);
+    setWindowEffect(effect);
   }
 
   /// Lets the madness begin! (macOS only.)
@@ -137,17 +119,18 @@ class MyAppBodyState extends State<MyAppBody> {
       final frameY = random.nextDouble() * windowHeight;
 
       // Remember to store its ID.
-      final subviewId =
-          await Window.addVisualEffectSubview(VisualEffectSubviewProperties(
-        effect: WindowEffect.hudWindow,
-        alphaValue: random.nextDouble(),
-        cornerRadius: random.nextDouble() * 48.0,
-        cornerMask: random.nextInt(16),
-        frameX: frameX,
-        frameY: frameY,
-        frameWidth: size,
-        frameHeight: size,
-      ));
+      final subviewId = await Window.addVisualEffectSubview(
+        VisualEffectSubviewProperties(
+          effect: WindowEffect.hudWindow,
+          alphaValue: random.nextDouble(),
+          cornerRadius: random.nextDouble() * 48.0,
+          cornerMask: random.nextInt(16),
+          frameX: frameX,
+          frameY: frameY,
+          frameWidth: size,
+          frameHeight: size,
+        ),
+      );
 
       Timer.periodic(const Duration(milliseconds: 8), (timer) {
         // Now, let's periodically update its position:
@@ -262,9 +245,6 @@ class MyAppBodyState extends State<MyAppBody> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  WindowTitleBar(
-                    brightness: brightness,
-                  ),
                   Padding(
                     padding: EdgeInsets.only(
                       left: 20.0,
@@ -291,9 +271,7 @@ class MyAppBodyState extends State<MyAppBody> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: buildEffectMenu(context),
-                  ),
+                  Expanded(child: buildEffectMenu(context)),
                   Divider(
                     height: 1.0,
                     color: brightness == InterfaceBrightness.dark
@@ -311,10 +289,11 @@ class MyAppBodyState extends State<MyAppBody> {
     );
   }
 
-  ButtonBar buildActionButtonBar(BuildContext context) {
-    return ButtonBar(
+  OverflowBar buildActionButtonBar(BuildContext context) {
+    return OverflowBar(
       alignment: MainAxisAlignment.start,
-      overflowButtonSpacing: 4.0,
+      spacing: 8.0,
+      overflowSpacing: 4.0,
       children: [
         ElevatedButton(
           onPressed: () => setState(() {
@@ -335,46 +314,27 @@ class MyAppBodyState extends State<MyAppBody> {
                   return 'auto';
               }
             })()}',
-            style: TextStyle(
-              color: Colors.white,
-            ),
+            style: TextStyle(color: Colors.white),
           ),
         ),
         ElevatedButton(
           onPressed: Window.hideWindowControls,
-          child: Text(
-            'Hide controls',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          child: Text('Hide controls', style: TextStyle(color: Colors.white)),
         ),
         ElevatedButton(
           onPressed: Window.showWindowControls,
-          child: Text(
-            'Show controls',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          child: Text('Show controls', style: TextStyle(color: Colors.white)),
         ),
         ElevatedButton(
           onPressed: Window.enterFullscreen,
           child: Text(
             'Enter fullscreen',
-            style: TextStyle(
-              color: Colors.white,
-            ),
+            style: TextStyle(color: Colors.white),
           ),
         ),
         ElevatedButton(
           onPressed: Window.exitFullscreen,
-          child: Text(
-            'Exit fullscreen',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          child: Text('Exit fullscreen', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
@@ -408,358 +368,370 @@ class MyAppBodyState extends State<MyAppBody> {
                     data: brightness.getIsDark(context)
                         ? ThemeData.dark()
                         : ThemeData.light(),
-                    child: LayoutBuilder(builder: (_, constraints) {
-                      return Center(
-                        child: SizedBox(
-                          width: min(512.0, constraints.maxWidth - 32.0),
-                          height: constraints.maxHeight - 32.0,
-                          child: MacOSActionMenu(
-                            items: [
-                              MacOSActionMenuItem(
-                                name: 'Set Document Edited',
-                                function: () => Window.setDocumentEdited(),
-                                description:
-                                    'This will change the appearance of the '
-                                    'close button on the titlebar.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Document Unedited',
-                                function: () => Window.setDocumentUnedited(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Represented Filename',
-                                function: () =>
-                                    Window.setRepresentedFilename('filename'),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Represented URL',
-                                function: () => Window.setRepresentedUrl('url'),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Hide Title',
-                                function: () => Window.hideTitle(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Show Title',
-                                function: () => Window.showTitle(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Make Titlebar Transparent',
-                                function: () =>
-                                    Window.makeTitlebarTransparent(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Make Titlebar Opaque',
-                                function: () => Window.makeTitlebarOpaque(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Enable Full Size Content View',
-                                function: () =>
-                                    Window.enableFullSizeContentView(),
-                                description:
-                                    'This expands the area that Flutter '
-                                    'can draw to to fill the entire '
-                                    'window. It is recommended to enable '
-                                    'the full-size content view when '
-                                    'making the titlebar transparent.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Disable Full Size Content View',
-                                function: () =>
-                                    Window.disableFullSizeContentView(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Zoom Window',
-                                function: () => Window.zoomWindow(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Unzoom Window',
-                                function: () => Window.unzoomWindow(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Hide Zoom Button',
-                                function: () => Window.hideZoomButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Show Zoom Button',
-                                function: () => Window.showZoomButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Hide Miniaturize Button',
-                                function: () => Window.hideMiniaturizeButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Show Miniaturize Button',
-                                function: () => Window.showMiniaturizeButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Hide Close Button',
-                                function: () => Window.hideCloseButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Show Close Button',
-                                function: () => Window.showCloseButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Enable Zoom Button',
-                                function: () => Window.enableZoomButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Disable Zoom Button',
-                                function: () => Window.disableZoomButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Enable Miniaturize Button',
-                                function: () =>
-                                    Window.enableMiniaturizeButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Disable Miniaturize Button',
-                                function: () =>
-                                    Window.disableMiniaturizeButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Enable Close Button',
-                                function: () => Window.enableCloseButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Disable Close Button',
-                                function: () => Window.disableCloseButton(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Window Alpha Value to 0.5',
-                                function: () => Window.setWindowAlphaValue(0.5),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Window Alpha Value to 0.75',
-                                function: () =>
-                                    Window.setWindowAlphaValue(0.75),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Window Alpha Value to 1.0',
-                                function: () => Window.setWindowAlphaValue(1.0),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Window Background Color to Default '
-                                    'Color',
-                                function: () => Window
-                                    .setWindowBackgroundColorToDefaultColor(),
-                                description:
-                                    'Sets the window background color to '
-                                    'the default (opaque) window color.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Window Background Color to Clear',
-                                function: () =>
-                                    Window.setWindowBackgroundColorToClear(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Blur View State to Active',
-                                function: () {
-                                  setState(() {
-                                    macOSBlurViewState =
-                                        MacOSBlurViewState.active;
-                                  });
-                                  Window.setBlurViewState(
-                                    MacOSBlurViewState.active,
-                                  );
-                                },
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Blur View State to Inactive',
-                                function: () {
-                                  setState(
-                                    () {
+                    child: LayoutBuilder(
+                      builder: (_, constraints) {
+                        return Center(
+                          child: SizedBox(
+                            width: min(512.0, constraints.maxWidth - 32.0),
+                            height: constraints.maxHeight - 32.0,
+                            child: MacOSActionMenu(
+                              items: [
+                                MacOSActionMenuItem(
+                                  name: 'Set Document Edited',
+                                  function: () => Window.setDocumentEdited(),
+                                  description:
+                                      'This will change the appearance of the '
+                                      'close button on the titlebar.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Document Unedited',
+                                  function: () => Window.setDocumentUnedited(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Represented Filename',
+                                  function: () =>
+                                      Window.setRepresentedFilename('filename'),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Represented URL',
+                                  function: () =>
+                                      Window.setRepresentedUrl('url'),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Hide Title',
+                                  function: () => Window.hideTitle(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Show Title',
+                                  function: () => Window.showTitle(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Make Titlebar Transparent',
+                                  function: () =>
+                                      Window.makeTitlebarTransparent(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Make Titlebar Opaque',
+                                  function: () => Window.makeTitlebarOpaque(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Enable Full Size Content View',
+                                  function: () =>
+                                      Window.enableFullSizeContentView(),
+                                  description:
+                                      'This expands the area that Flutter '
+                                      'can draw to to fill the entire '
+                                      'window. It is recommended to enable '
+                                      'the full-size content view when '
+                                      'making the titlebar transparent.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Disable Full Size Content View',
+                                  function: () =>
+                                      Window.disableFullSizeContentView(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Zoom Window',
+                                  function: () => Window.zoomWindow(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Unzoom Window',
+                                  function: () => Window.unzoomWindow(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Hide Zoom Button',
+                                  function: () => Window.hideZoomButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Show Zoom Button',
+                                  function: () => Window.showZoomButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Hide Miniaturize Button',
+                                  function: () =>
+                                      Window.hideMiniaturizeButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Show Miniaturize Button',
+                                  function: () =>
+                                      Window.showMiniaturizeButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Hide Close Button',
+                                  function: () => Window.hideCloseButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Show Close Button',
+                                  function: () => Window.showCloseButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Enable Zoom Button',
+                                  function: () => Window.enableZoomButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Disable Zoom Button',
+                                  function: () => Window.disableZoomButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Enable Miniaturize Button',
+                                  function: () =>
+                                      Window.enableMiniaturizeButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Disable Miniaturize Button',
+                                  function: () =>
+                                      Window.disableMiniaturizeButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Enable Close Button',
+                                  function: () => Window.enableCloseButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Disable Close Button',
+                                  function: () => Window.disableCloseButton(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Window Alpha Value to 0.5',
+                                  function: () =>
+                                      Window.setWindowAlphaValue(0.5),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Window Alpha Value to 0.75',
+                                  function: () =>
+                                      Window.setWindowAlphaValue(0.75),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Window Alpha Value to 1.0',
+                                  function: () =>
+                                      Window.setWindowAlphaValue(1.0),
+                                ),
+                                MacOSActionMenuItem(
+                                  name:
+                                      'Set Window Background Color to Default '
+                                      'Color',
+                                  function: () =>
+                                      Window.setWindowBackgroundColorToDefaultColor(),
+                                  description:
+                                      'Sets the window background color to '
+                                      'the default (opaque) window color.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Window Background Color to Clear',
+                                  function: () =>
+                                      Window.setWindowBackgroundColorToClear(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Blur View State to Active',
+                                  function: () {
+                                    setState(() {
+                                      macOSBlurViewState =
+                                          MacOSBlurViewState.active;
+                                    });
+                                    Window.setBlurViewState(
+                                      MacOSBlurViewState.active,
+                                    );
+                                  },
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Blur View State to Inactive',
+                                  function: () {
+                                    setState(() {
                                       macOSBlurViewState =
                                           MacOSBlurViewState.inactive;
-                                    },
-                                  );
-                                  Window.setBlurViewState(
-                                    MacOSBlurViewState.inactive,
-                                  );
-                                },
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Blur View State to Follows '
-                                    'Window Active State',
-                                function: () {
-                                  setState(
-                                    () {
+                                    });
+                                    Window.setBlurViewState(
+                                      MacOSBlurViewState.inactive,
+                                    );
+                                  },
+                                ),
+                                MacOSActionMenuItem(
+                                  name:
+                                      'Set Blur View State to Follows '
+                                      'Window Active State',
+                                  function: () {
+                                    setState(() {
                                       macOSBlurViewState = MacOSBlurViewState
                                           .followsWindowActiveState;
-                                    },
-                                  );
-                                  Window.setBlurViewState(MacOSBlurViewState
-                                      .followsWindowActiveState);
-                                },
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Add Toolbar',
-                                function: () => Window.addToolbar(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Remove Toolbar',
-                                function: () => Window.removeToolbar(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Toolbar Style to Automatic',
-                                function: () => Window.setToolbarStyle(
-                                  toolbarStyle: MacOSToolbarStyle.automatic,
+                                    });
+                                    Window.setBlurViewState(
+                                      MacOSBlurViewState
+                                          .followsWindowActiveState,
+                                    );
+                                  },
                                 ),
-                                description:
-                                    'For this method to have an effect, the '
-                                    'window needs to have had a toolbar '
-                                    'added beforehand. This can be achieved '
-                                    'using the “Add Toolbar” action.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Toolbar Style to Expanded',
-                                function: () => Window.setToolbarStyle(
-                                  toolbarStyle: MacOSToolbarStyle.expanded,
+                                MacOSActionMenuItem(
+                                  name: 'Add Toolbar',
+                                  function: () => Window.addToolbar(),
                                 ),
-                                description:
-                                    'For this method to have an effect, '
-                                    'the window needs to have had a toolbar '
-                                    'added beforehand. This can be achieved '
-                                    'using the “Add Toolbar” action.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Toolbar Style to Preference',
-                                function: () => Window.setToolbarStyle(
-                                  toolbarStyle: MacOSToolbarStyle.preference,
+                                MacOSActionMenuItem(
+                                  name: 'Remove Toolbar',
+                                  function: () => Window.removeToolbar(),
                                 ),
-                                description:
-                                    'For this method to have an effect, the '
-                                    'window needs to have had a toolbar '
-                                    'added beforehand. This can be achieved '
-                                    'using the “Add Toolbar” action.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Toolbar Style to Unified',
-                                function: () => Window.setToolbarStyle(
-                                  toolbarStyle: MacOSToolbarStyle.unified,
+                                MacOSActionMenuItem(
+                                  name: 'Set Toolbar Style to Automatic',
+                                  function: () => Window.setToolbarStyle(
+                                    toolbarStyle: MacOSToolbarStyle.automatic,
+                                  ),
+                                  description:
+                                      'For this method to have an effect, the '
+                                      'window needs to have had a toolbar '
+                                      'added beforehand. This can be achieved '
+                                      'using the “Add Toolbar” action.',
                                 ),
-                                description:
-                                    'For this method to have an effect, the '
-                                    'window needs to have had a toolbar '
-                                    'added beforehand. This can be achieved '
-                                    'using the “Add Toolbar” action.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Toolbar Style to Unified Compact',
-                                function: () => Window.setToolbarStyle(
-                                  toolbarStyle:
-                                      MacOSToolbarStyle.unifiedCompact,
+                                MacOSActionMenuItem(
+                                  name: 'Set Toolbar Style to Expanded',
+                                  function: () => Window.setToolbarStyle(
+                                    toolbarStyle: MacOSToolbarStyle.expanded,
+                                  ),
+                                  description:
+                                      'For this method to have an effect, '
+                                      'the window needs to have had a toolbar '
+                                      'added beforehand. This can be achieved '
+                                      'using the “Add Toolbar” action.',
                                 ),
-                                description:
-                                    'For this method to have an effect, the '
-                                    'window needs to have had a toolbar '
-                                    'added beforehand. This can be achieved '
-                                    'using the “Add Toolbar” action.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Enable Shadow',
-                                function: () => Window.enableShadow(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Disable Shadow',
-                                function: () => Window.disableShadow(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Invalidate Shadows',
-                                function: () => Window.invalidateShadows(),
-                                description:
-                                    'This is a fairly technical action and '
-                                    'is included here for completeness\' '
-                                    'sake. Normally, it should not be '
-                                    'necessary to use it.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Add Empty Mask Image',
-                                function: () => Window.addEmptyMaskImage(),
-                                description:
-                                    'This will effectively disable the '
-                                    '`NSVisualEffectView`\'s effect.\n\n'
-                                    '**Warning:** It is recommended to '
-                                    'disable the window\'s shadow using '
-                                    '`Window.disableShadow()` when using '
-                                    'this method. Keeping the shadow '
-                                    'enabled when using an empty mask image '
-                                    'can cause visual artifacts and '
-                                    'performance issues.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Remove Mask Image',
-                                function: () => Window.removeMaskImage(),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Make Window Fully Transparent',
-                                function: () =>
-                                    Window.makeWindowFullyTransparent(),
-                                description: 'Makes a window fully transparent '
-                                    '(with no blur effect). This is a '
-                                    'convenience function which executes:\n'
-                                    '```dart\n'
-                                    'setWindowBackgroundColorToClear();\n'
-                                    'makeTitlebarTransparent();\n'
-                                    'addEmptyMaskImage();\n'
-                                    'disableShadow();\n```\n**Warning:** '
-                                    'When the window is fully transparent, '
-                                    'its highlight effect (the thin white '
-                                    'line at the top of the window) is '
-                                    'still visible. This is considered a '
-                                    'bug and may change in a future version.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Ignore Mouse Events',
-                                function: () {
-                                  Window.ignoreMouseEvents();
-                                  Timer(
-                                    const Duration(seconds: 5),
-                                    () => Window.acknowledgeMouseEvents(),
-                                  );
-                                },
-                                description:
-                                    'This action can be used to make parts '
-                                    'of the window click-through, which may '
-                                    'be desirable when used in conjunction '
-                                    'with '
-                                    '`Window.makeWindowFullyTransparent()`.'
-                                    '\n\n**Note:** Executing this action '
-                                    'will make this widow click-through, '
-                                    'thus making it impossible to perform '
-                                    'the “Acknowledge Mouse Events” again. '
-                                    'For this reason, the example app '
-                                    'automatically starts acknowledging '
-                                    'mouse events again after five seconds.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Acknowledge Mouse Events',
-                                function: () => Window.acknowledgeMouseEvents(),
-                                description: 'This action is included here for '
-                                    'completeness\' sake, however it is '
-                                    'technically impossible to run it after '
-                                    'performing the “Ignore Mouse Events” '
-                                    'action, since the “show all actions” '
-                                    'button can then no longer be clicked.',
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Set Subtitle',
-                                function: () => Window.setSubtitle('subtitle'),
-                              ),
-                              MacOSActionMenuItem(
-                                name: 'Remove Subtitle',
-                                function: () => Window.setSubtitle(''),
-                                description: 'The action works by setting the '
-                                    'subtitle to an empty string using '
-                                    '`Window.setSubtitle(\'\')`. There is no '
-                                    'method called `Window.removeSubtitle()`.',
-                              ),
-                            ],
+                                MacOSActionMenuItem(
+                                  name: 'Set Toolbar Style to Preference',
+                                  function: () => Window.setToolbarStyle(
+                                    toolbarStyle: MacOSToolbarStyle.preference,
+                                  ),
+                                  description:
+                                      'For this method to have an effect, the '
+                                      'window needs to have had a toolbar '
+                                      'added beforehand. This can be achieved '
+                                      'using the “Add Toolbar” action.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Toolbar Style to Unified',
+                                  function: () => Window.setToolbarStyle(
+                                    toolbarStyle: MacOSToolbarStyle.unified,
+                                  ),
+                                  description:
+                                      'For this method to have an effect, the '
+                                      'window needs to have had a toolbar '
+                                      'added beforehand. This can be achieved '
+                                      'using the “Add Toolbar” action.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Toolbar Style to Unified Compact',
+                                  function: () => Window.setToolbarStyle(
+                                    toolbarStyle:
+                                        MacOSToolbarStyle.unifiedCompact,
+                                  ),
+                                  description:
+                                      'For this method to have an effect, the '
+                                      'window needs to have had a toolbar '
+                                      'added beforehand. This can be achieved '
+                                      'using the “Add Toolbar” action.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Enable Shadow',
+                                  function: () => Window.enableShadow(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Disable Shadow',
+                                  function: () => Window.disableShadow(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Invalidate Shadows',
+                                  function: () => Window.invalidateShadows(),
+                                  description:
+                                      'This is a fairly technical action and '
+                                      'is included here for completeness\' '
+                                      'sake. Normally, it should not be '
+                                      'necessary to use it.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Add Empty Mask Image',
+                                  function: () => Window.addEmptyMaskImage(),
+                                  description:
+                                      'This will effectively disable the '
+                                      '`NSVisualEffectView`\'s effect.\n\n'
+                                      '**Warning:** It is recommended to '
+                                      'disable the window\'s shadow using '
+                                      '`Window.disableShadow()` when using '
+                                      'this method. Keeping the shadow '
+                                      'enabled when using an empty mask image '
+                                      'can cause visual artifacts and '
+                                      'performance issues.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Remove Mask Image',
+                                  function: () => Window.removeMaskImage(),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Make Window Fully Transparent',
+                                  function: () =>
+                                      Window.makeWindowFullyTransparent(),
+                                  description:
+                                      'Makes a window fully transparent '
+                                      '(with no blur effect). This is a '
+                                      'convenience function which executes:\n'
+                                      '```dart\n'
+                                      'setWindowBackgroundColorToClear();\n'
+                                      'makeTitlebarTransparent();\n'
+                                      'addEmptyMaskImage();\n'
+                                      'disableShadow();\n```\n**Warning:** '
+                                      'When the window is fully transparent, '
+                                      'its highlight effect (the thin white '
+                                      'line at the top of the window) is '
+                                      'still visible. This is considered a '
+                                      'bug and may change in a future version.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Ignore Mouse Events',
+                                  function: () {
+                                    Window.ignoreMouseEvents();
+                                    Timer(
+                                      const Duration(seconds: 5),
+                                      () => Window.acknowledgeMouseEvents(),
+                                    );
+                                  },
+                                  description:
+                                      'This action can be used to make parts '
+                                      'of the window click-through, which may '
+                                      'be desirable when used in conjunction '
+                                      'with '
+                                      '`Window.makeWindowFullyTransparent()`.'
+                                      '\n\n**Note:** Executing this action '
+                                      'will make this widow click-through, '
+                                      'thus making it impossible to perform '
+                                      'the “Acknowledge Mouse Events” again. '
+                                      'For this reason, the example app '
+                                      'automatically starts acknowledging '
+                                      'mouse events again after five seconds.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Acknowledge Mouse Events',
+                                  function: () =>
+                                      Window.acknowledgeMouseEvents(),
+                                  description:
+                                      'This action is included here for '
+                                      'completeness\' sake, however it is '
+                                      'technically impossible to run it after '
+                                      'performing the “Ignore Mouse Events” '
+                                      'action, since the “show all actions” '
+                                      'button can then no longer be clicked.',
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Set Subtitle',
+                                  function: () =>
+                                      Window.setSubtitle('subtitle'),
+                                ),
+                                MacOSActionMenuItem(
+                                  name: 'Remove Subtitle',
+                                  function: () => Window.setSubtitle(''),
+                                  description:
+                                      'The action works by setting the '
+                                      'subtitle to an empty string using '
+                                      '`Window.setSubtitle(\'\')`. There is no '
+                                      'method called `Window.removeSubtitle()`.',
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
+                        );
+                      },
+                    ),
                   );
                 },
               );
@@ -776,115 +748,31 @@ class MyAppBodyState extends State<MyAppBody> {
         data: brightness.getIsDark(context)
             ? ThemeData.dark()
             : ThemeData.light(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: (Platform.isWindows
-                  ? WindowEffect.values.take(7)
-                  : WindowEffect.values)
-              .map(
-                (effect) => RadioListTile<WindowEffect>(
-                  title: Text(
-                    effect.toString(),
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: brightness.getForegroundColor(context),
-                    ),
-                  ),
-                  value: effect,
-                  groupValue: this.effect,
-                  onChanged: this.setWindowEffect,
-                ),
-              )
-              .toList(),
+        child: RadioGroup<WindowEffect>(
+          groupValue: effect,
+          onChanged: setWindowEffect,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children:
+                (Platform.isWindows
+                        ? WindowEffect.values.take(7)
+                        : WindowEffect.values)
+                    .map(
+                      (effect) => RadioListTile<WindowEffect>(
+                        title: Text(
+                          effect.toString(),
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: brightness.getForegroundColor(context),
+                          ),
+                        ),
+                        value: effect,
+                      ),
+                    )
+                    .toList(),
+          ),
         ),
       ),
     );
-  }
-}
-
-class WindowTitleBar extends StatelessWidget {
-  final InterfaceBrightness brightness;
-  const WindowTitleBar({Key? key, required this.brightness}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Platform.isWindows
-        ? Container(
-            width: MediaQuery.of(context).size.width,
-            height: 32.0,
-            color: Colors.transparent,
-            child: MoveWindow(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Spacer(),
-                  MinimizeWindowButton(
-                    colors: WindowButtonColors(
-                      iconNormal: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      iconMouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      iconMouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      normal: Colors.transparent,
-                      mouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.04)
-                          : Colors.white.withOpacity(0.04),
-                      mouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.08),
-                    ),
-                  ),
-                  MaximizeWindowButton(
-                    colors: WindowButtonColors(
-                      iconNormal: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      iconMouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      iconMouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      normal: Colors.transparent,
-                      mouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.04)
-                          : Colors.white.withOpacity(0.04),
-                      mouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.08),
-                    ),
-                  ),
-                  CloseWindowButton(
-                    onPressed: () {
-                      appWindow.close();
-                    },
-                    colors: WindowButtonColors(
-                      iconNormal: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      iconMouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      iconMouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black
-                          : Colors.white,
-                      normal: Colors.transparent,
-                      mouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.04)
-                          : Colors.white.withOpacity(0.04),
-                      mouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.08),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        : Container();
   }
 }

@@ -13,28 +13,22 @@ void main() {
     },
   );
 
-  testWidgets(
-    'visual effect subview container resize event relay resize event '
-    'triggered once',
-    (tester) async {
-      final relay = VisualEffectSubviewContainerResizeEventRelay(
-        disableUpdateOnBuild: false,
-      );
-      relay.registerForceUpdateFunction(expectAsync0(() {}, count: 1));
-      relay.onResize();
-    },
-  );
+  testWidgets('visual effect subview container resize event relay resize event '
+      'triggered once', (tester) async {
+    final relay = VisualEffectSubviewContainerResizeEventRelay(
+      disableUpdateOnBuild: false,
+    );
+    relay.registerForceUpdateFunction(expectAsync0(() {}, count: 1));
+    relay.onResize();
+  });
 
-  testWidgets(
-    'visual effect subview container resize event relay resize event '
-    'triggered twice',
-    (tester) async {
-      final relay = VisualEffectSubviewContainerResizeEventRelay(
-        disableUpdateOnBuild: false,
-      );
-      relay.registerForceUpdateFunction(expectAsync0(() {}, count: 2));
-      relay.onResize();
-      relay.onResize();
-    },
-  );
+  testWidgets('visual effect subview container resize event relay resize event '
+      'triggered twice', (tester) async {
+    final relay = VisualEffectSubviewContainerResizeEventRelay(
+      disableUpdateOnBuild: false,
+    );
+    relay.registerForceUpdateFunction(expectAsync0(() {}, count: 2));
+    relay.onResize();
+    relay.onResize();
+  });
 }

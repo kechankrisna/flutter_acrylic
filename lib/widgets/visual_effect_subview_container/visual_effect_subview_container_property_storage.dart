@@ -14,10 +14,10 @@ class VisualEffectSubviewContainerPropertyStorage {
   ) {
     final hasFrameSizeChanged =
         newProperties.frameWidth != _currentProperties.frameWidth ||
-            newProperties.frameHeight != _currentProperties.frameHeight;
+        newProperties.frameHeight != _currentProperties.frameHeight;
     final hasFramePositionChanged =
         newProperties.frameX != _currentProperties.frameX ||
-            newProperties.frameY != _currentProperties.frameY;
+        newProperties.frameY != _currentProperties.frameY;
     final hasAlphaValueChanged =
         newProperties.alphaValue != _currentProperties.alphaValue;
     final hasCornerRadiusChanged =
@@ -62,15 +62,18 @@ class VisualEffectSubviewContainerPropertyStorage {
       frameY = newProperties.frameY;
     }
 
-    final alphaValue =
-        propertyChange.hasAlphaValueChanged ? newProperties.alphaValue : null;
+    final alphaValue = propertyChange.hasAlphaValueChanged
+        ? newProperties.alphaValue
+        : null;
     final cornerRadius = propertyChange.hasCornerRadiusChanged
         ? newProperties.cornerRadius
         : null;
-    final cornerMask =
-        propertyChange.hasCornerMaskChanged ? newProperties.cornerMask : null;
-    final effect =
-        propertyChange.hasEffectChanged ? newProperties.effect : null;
+    final cornerMask = propertyChange.hasCornerMaskChanged
+        ? newProperties.cornerMask
+        : null;
+    final effect = propertyChange.hasEffectChanged
+        ? newProperties.effect
+        : null;
     final state = propertyChange.hasStateChanged ? newProperties.state : null;
 
     return VisualEffectSubviewProperties(

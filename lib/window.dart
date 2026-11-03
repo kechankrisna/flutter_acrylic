@@ -104,19 +104,16 @@ class Window {
     }
 
     await _kCompleter.future;
-    await _kChannel.invokeMethod(
-      _kSetEffect,
-      {
-        'effect': effect.index,
-        'color': {
-          'R': color.red,
-          'G': color.green,
-          'B': color.blue,
-          'A': color.alpha,
-        },
-        'dark': dark,
+    await _kChannel.invokeMethod(_kSetEffect, {
+      'effect': effect.index,
+      'color': {
+        'R': (color.r * 255.0).round().clamp(0, 255),
+        'G': (color.g * 255.0).round().clamp(0, 255),
+        'B': (color.b * 255.0).round().clamp(0, 255),
+        'A': (color.a * 255.0).round().clamp(0, 255),
       },
-    );
+      'dark': dark,
+    });
   }
 
   /// Hides window controls.
@@ -444,8 +441,10 @@ class Window {
   ///
   /// This method is only available on macOS.
   static Future<void> setBlurViewState(MacOSBlurViewState state) async {
-    final visualEffectViewState = BlurViewStateToVisualEffectViewStateConverter
-        .convertBlurViewStateToVisualEffectViewState(state);
+    final visualEffectViewState =
+        BlurViewStateToVisualEffectViewStateConverter.convertBlurViewStateToVisualEffectViewState(
+          state,
+        );
     WindowManipulator.setNSVisualEffectViewState(visualEffectViewState);
   }
 
@@ -457,8 +456,8 @@ class Window {
     VisualEffectSubviewProperties properties,
   ) async {
     if (Platform.isMacOS) {
-      final newProperties =
-          properties.toMacOSWindowUtilsVisualEffectSubviewProperties();
+      final newProperties = properties
+          .toMacOSWindowUtilsVisualEffectSubviewProperties();
 
       return WindowManipulator.addVisualEffectSubview(newProperties);
     }
@@ -473,8 +472,8 @@ class Window {
     int visualEffectSubviewId,
     VisualEffectSubviewProperties properties,
   ) async {
-    final newProperties =
-        properties.toMacOSWindowUtilsVisualEffectSubviewProperties();
+    final newProperties = properties
+        .toMacOSWindowUtilsVisualEffectSubviewProperties();
     WindowManipulator.updateVisualEffectSubviewProperties(
       visualEffectSubviewId,
       newProperties,
@@ -491,9 +490,7 @@ class Window {
   }
 
   /// Overrides the brightness setting of the window (macOS only).
-  static Future<void> overrideMacOSBrightness({
-    required bool dark,
-  }) async {
+  static Future<void> overrideMacOSBrightness({required bool dark}) async {
     WindowManipulator.overrideMacOSBrightness(dark: dark);
   }
 
@@ -520,8 +517,10 @@ class Window {
   static Future<void> setToolbarStyle({
     required MacOSToolbarStyle toolbarStyle,
   }) async {
-    final newToolbarStyle = MacOSToolbarStyleToWindowToolbarStyleConverter
-        .convertMacOSToolbarStyleToWindowToolbarStyle(toolbarStyle);
+    final newToolbarStyle =
+        MacOSToolbarStyleToWindowToolbarStyleConverter.convertMacOSToolbarStyleToWindowToolbarStyle(
+          toolbarStyle,
+        );
     WindowManipulator.setToolbarStyle(toolbarStyle: newToolbarStyle);
   }
 
