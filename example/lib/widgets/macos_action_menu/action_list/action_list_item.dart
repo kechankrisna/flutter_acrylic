@@ -73,10 +73,9 @@ class _ActionListItemState extends State<ActionListItem> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 50),
           decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .surface
-                .withValues(alpha: _getBackgroundOpacity()),
+            color: Theme.of(
+              context,
+            ).colorScheme.surface.withValues(alpha: _getBackgroundOpacity()),
           ),
           child: SizedBox(
             width: double.infinity,
@@ -91,8 +90,9 @@ class _ActionListItemState extends State<ActionListItem> {
                 child: Text(
                   widget.name,
                   style: TextStyle(
-                    fontWeight:
-                        widget.isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: widget.isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ),

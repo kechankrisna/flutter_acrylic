@@ -69,10 +69,7 @@ class _SidebarFrameState extends State<SidebarFrame> {
               },
               child: widget.sidebar,
             ),
-            Container(
-              width: 1.0,
-              color: Colors.black.withValues(alpha: 0.2),
-            ),
+            Container(width: 1.0, color: Colors.black.withValues(alpha: 0.2)),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 32.0),

@@ -1,3 +1,9 @@
+## 1.2.1
+
+- Reformatted the code with the Dart 3.9 formatter style.
+- Example: removed the `bitsdojo_window` dependency. The example now uses the standard Windows title bar, and flutter_acrylic itself never depended on `bitsdojo_window`.
+- Example: migrated the macOS project from CocoaPods to Swift Package Manager.
+
 ## 1.2.0
 
 - Added support for the latest Flutter (tested with Flutter 3.47.6 / Dart 3.13.5).

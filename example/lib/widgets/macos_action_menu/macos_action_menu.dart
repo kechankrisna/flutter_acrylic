@@ -86,10 +86,10 @@ class _MacOSActionMenuState extends State<MacOSActionMenu> {
                         labelText: 'Search for a macOS action to perform:',
                       ),
                       onChanged: ((value) => setState(() {
-                            _searchString = value;
-                            _updateFilteredItems();
-                            _selectedIndex = 0;
-                          })),
+                        _searchString = value;
+                        _updateFilteredItems();
+                        _selectedIndex = 0;
+                      })),
                     ),
                   ),
                   Expanded(

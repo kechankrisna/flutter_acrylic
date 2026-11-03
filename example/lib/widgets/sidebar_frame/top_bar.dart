@@ -18,9 +18,7 @@ class TopBar extends StatelessWidget {
               onPressed: onSidebarToggleButtonPressed,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.view_sidebar_outlined,
-                  ),
+                  Icon(Icons.view_sidebar_outlined),
                   const SizedBox(width: 6.0),
                   Text('Toggle sidebar'),
                 ],
