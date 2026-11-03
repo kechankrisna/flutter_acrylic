@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
@@ -14,15 +16,44 @@ class _MacOSTitlebarSafeArea extends StatefulWidget {
 
 class _MacOSTitlebarSafeAreaState extends State<_MacOSTitlebarSafeArea> {
   double _titlebarHeight = 0.0;
+  Timer? _settleTimer;
 
-  /// Updates the height of the titlebar, if necessary.
+  /// Reads the titlebar height. The native value can be transiently wrong
+  /// (even negative) while the window is being resized, zoomed, or
+  /// entering/exiting fullscreen, and negative padding is not allowed.
+  Future<double> _readTitlebarHeight() async =>
+      max(0.0, await Window.getTitlebarHeight());
+
+  /// Schedules an update of the titlebar height, if it has changed.
+  ///
+  /// The new height is applied only once the window has settled: besides the
+  /// native value being unreliable mid-transition, relayouting while the
+  /// window is still resizing can crash the Impeller renderer.
   Future<void> _updateTitlebarHeight() async {
-    final newTitlebarHeight = await Window.getTitlebarHeight();
-    if (_titlebarHeight != newTitlebarHeight) {
+    final newTitlebarHeight = await _readTitlebarHeight();
+    if (!mounted || _titlebarHeight == newTitlebarHeight) return;
+
+    _settleTimer?.cancel();
+    _settleTimer = Timer(const Duration(milliseconds: 100), () async {
+      final settledTitlebarHeight = await _readTitlebarHeight();
+      if (!mounted || _titlebarHeight == settledTitlebarHeight) return;
       setState(() {
-        _titlebarHeight = newTitlebarHeight;
+        _titlebarHeight = settledTitlebarHeight;
       });
-    }
+
+      // The window may still have been transitioning; check again later so a
+      // transient value does not stick until the next unrelated rebuild.
+      _settleTimer = Timer(
+        const Duration(milliseconds: 500),
+        _updateTitlebarHeight,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _settleTimer?.cancel();
+    super.dispose();
   }
 
   @override
