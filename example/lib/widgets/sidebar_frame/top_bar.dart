@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 class TopBar extends StatelessWidget {
   final void Function() onSidebarToggleButtonPressed;
 
-  const TopBar({Key? key, required this.onSidebarToggleButtonPressed})
-      : super(key: key);
+  const TopBar({super.key, required this.onSidebarToggleButtonPressed});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 32.0,
       child: Row(
         children: [

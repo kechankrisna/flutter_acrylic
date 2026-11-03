@@ -1,3 +1,12 @@
+## 1.2.0
+
+- Added support for the latest Flutter (tested with Flutter 3.47.6 / Dart 3.13.5).
+- Raised the minimum Dart SDK to 3.9.2.
+- Upgraded [macos_window_utils](https://pub.dev/packages/macos_window_utils) to version 1.9.1.
+- Replaced the deprecated `Color.red`/`green`/`blue`/`alpha` getters with `Color.r`/`g`/`b`/`a`.
+- Removed the discontinued `dart_code_metrics` dev dependency and upgraded `flutter_lints` to version 6.0.0.
+- Example: replaced the discontinued `flutter_markdown` with `flutter_markdown_plus`, migrated `ButtonBar` to `OverflowBar` and `RadioListTile` to `RadioGroup`, and raised the macOS deployment target to 12.0.
+
 ## 1.1.4
 
 - Fixed a bug that caused the title bar to be incorrectly rendered on Windows 11 [[#81](https://github.com/alexmercerind/flutter_acrylic/pull/81)] (@Auties00).

@@ -1,4 +1,4 @@
-library flutter_acrylic;
+library;
 
 export 'macos/macos_blur_view_state.dart';
 export 'macos/macos_toolbar_style.dart';

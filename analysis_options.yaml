@@ -25,25 +25,10 @@ linter:
     - use_super_parameters
 
 analyzer:
-  plugins:
-    - dart_code_metrics
+  exclude:
+    - build/**
+    - windows/**
+    - linux/**
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
-
-dart_code_metrics:
-  metrics:
-    cyclomatic-complexity: 20
-    number-of-parameters: 10
-    maximum-nesting-level: 5
-  metrics-exclude:
-    - test/**
-    - example/test/**
-  rules:
-    - newline-before-return
-    - prefer-trailing-comma
-    - always-remove-listener
-    - avoid-border-all
-    - avoid-expanded-as-spacer
-    - avoid-unnecessary-setstate
-    - prefer-const-border-radius

@@ -10,7 +10,7 @@ import 'action_list/action_list.dart';
 class MacOSActionMenu extends StatefulWidget {
   final List<MacOSActionMenuItem> items;
 
-  const MacOSActionMenu({Key? key, required this.items}) : super(key: key);
+  const MacOSActionMenu({super.key, required this.items});
 
   @override
   State<MacOSActionMenu> createState() => _MacOSActionMenuState();

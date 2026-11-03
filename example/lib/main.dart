@@ -28,7 +28,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ extension InterfaceBrightnessExtension on InterfaceBrightness {
 }
 
 class MyAppBody extends StatefulWidget {
-  MyAppBody({Key? key}) : super(key: key);
+  const MyAppBody({super.key});
 
   @override
   MyAppBodyState createState() => MyAppBodyState();
@@ -87,13 +87,13 @@ class MyAppBodyState extends State<MyAppBody> {
   @override
   void initState() {
     super.initState();
-    this.setWindowEffect(this.effect);
+    setWindowEffect(effect);
   }
 
   void setWindowEffect(WindowEffect? value) {
     Window.setEffect(
       effect: value!,
-      color: this.color,
+      color: color,
       dark: brightness == InterfaceBrightness.dark,
     );
     if (Platform.isMacOS) {
@@ -103,7 +103,7 @@ class MyAppBodyState extends State<MyAppBody> {
         );
       }
     }
-    this.setState(() => this.effect = value);
+    setState(() => effect = value);
   }
 
   void setBrightness(InterfaceBrightness brightness) {
@@ -113,7 +113,7 @@ class MyAppBodyState extends State<MyAppBody> {
     } else {
       color = Platform.isWindows ? Color(0x22DDDDDD) : Colors.transparent;
     }
-    this.setWindowEffect(this.effect);
+    setWindowEffect(effect);
   }
 
   /// Lets the madness begin! (macOS only.)
@@ -311,10 +311,11 @@ class MyAppBodyState extends State<MyAppBody> {
     );
   }
 
-  ButtonBar buildActionButtonBar(BuildContext context) {
-    return ButtonBar(
+  OverflowBar buildActionButtonBar(BuildContext context) {
+    return OverflowBar(
       alignment: MainAxisAlignment.start,
-      overflowButtonSpacing: 4.0,
+      spacing: 8.0,
+      overflowSpacing: 4.0,
       children: [
         ElevatedButton(
           onPressed: () => setState(() {
@@ -776,26 +777,28 @@ class MyAppBodyState extends State<MyAppBody> {
         data: brightness.getIsDark(context)
             ? ThemeData.dark()
             : ThemeData.light(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: (Platform.isWindows
-                  ? WindowEffect.values.take(7)
-                  : WindowEffect.values)
-              .map(
-                (effect) => RadioListTile<WindowEffect>(
-                  title: Text(
-                    effect.toString(),
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: brightness.getForegroundColor(context),
+        child: RadioGroup<WindowEffect>(
+          groupValue: effect,
+          onChanged: setWindowEffect,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: (Platform.isWindows
+                    ? WindowEffect.values.take(7)
+                    : WindowEffect.values)
+                .map(
+                  (effect) => RadioListTile<WindowEffect>(
+                    title: Text(
+                      effect.toString(),
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: brightness.getForegroundColor(context),
+                      ),
                     ),
+                    value: effect,
                   ),
-                  value: effect,
-                  groupValue: this.effect,
-                  onChanged: this.setWindowEffect,
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
         ),
       ),
     );
@@ -804,7 +807,7 @@ class MyAppBodyState extends State<MyAppBody> {
 
 class WindowTitleBar extends StatelessWidget {
   final InterfaceBrightness brightness;
-  const WindowTitleBar({Key? key, required this.brightness}) : super(key: key);
+  const WindowTitleBar({super.key, required this.brightness});
 
   @override
   Widget build(BuildContext context) {
@@ -831,11 +834,11 @@ class WindowTitleBar extends StatelessWidget {
                           : Colors.white,
                       normal: Colors.transparent,
                       mouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.04)
-                          : Colors.white.withOpacity(0.04),
+                          ? Colors.black.withValues(alpha: 0.04)
+                          : Colors.white.withValues(alpha: 0.04),
                       mouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.08),
+                          ? Colors.black.withValues(alpha: 0.08)
+                          : Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                   MaximizeWindowButton(
@@ -851,11 +854,11 @@ class WindowTitleBar extends StatelessWidget {
                           : Colors.white,
                       normal: Colors.transparent,
                       mouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.04)
-                          : Colors.white.withOpacity(0.04),
+                          ? Colors.black.withValues(alpha: 0.04)
+                          : Colors.white.withValues(alpha: 0.04),
                       mouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.08),
+                          ? Colors.black.withValues(alpha: 0.08)
+                          : Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                   CloseWindowButton(
@@ -874,11 +877,11 @@ class WindowTitleBar extends StatelessWidget {
                           : Colors.white,
                       normal: Colors.transparent,
                       mouseOver: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.04)
-                          : Colors.white.withOpacity(0.04),
+                          ? Colors.black.withValues(alpha: 0.04)
+                          : Colors.white.withValues(alpha: 0.04),
                       mouseDown: brightness == InterfaceBrightness.light
-                          ? Colors.black.withOpacity(0.08)
-                          : Colors.white.withOpacity(0.08),
+                          ? Colors.black.withValues(alpha: 0.08)
+                          : Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                 ],

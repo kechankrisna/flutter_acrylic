@@ -109,10 +109,10 @@ class Window {
       {
         'effect': effect.index,
         'color': {
-          'R': color.red,
-          'G': color.green,
-          'B': color.blue,
-          'A': color.alpha,
+          'R': (color.r * 255.0).round().clamp(0, 255),
+          'G': (color.g * 255.0).round().clamp(0, 255),
+          'B': (color.b * 255.0).round().clamp(0, 255),
+          'A': (color.a * 255.0).round().clamp(0, 255),
         },
         'dark': dark,
       },
