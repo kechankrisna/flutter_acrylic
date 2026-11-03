@@ -1,3 +1,11 @@
+## 1.2.2
+
+- Fixed `TitlebarSafeArea` throwing `'value.isNonNegative': is not true` on recent Flutter versions while the window is resized, zoomed, or entering/exiting fullscreen. The titlebar height is now clamped to non-negative values and only applied once the window has settled.
+- Fixed `VisualEffectSubviewContainer` (and `TransparentMacOSSidebar`/`TransparentMacOSBottomBar`) throwing `'attached': is not true` when its delayed update runs after the widget is unmounted or detached.
+- Documented an Impeller crash that can occur when the full-size content view is toggled at runtime, and how to opt out of Impeller on macOS.
+- Updated the README's macOS setup notes for current Flutter (deployment target 12.0).
+- Example: disabled Impeller on macOS.
+
 ## 1.2.1
 
 - Reformatted the code with the Dart 3.9 formatter style.
